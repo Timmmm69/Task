@@ -572,7 +572,7 @@
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,0,0,8" VerticalAlignment="Center">
                                             <Path Data="{StaticResource Task.Icon.Calendar}" Width="14" Height="14" Stretch="Uniform"
-                                                  Fill="{DynamicResource Task.Brush.Text.Secondary}" />
+                                                  Fill="{DynamicResource Task.Brush.Semantic.Info}" />
                                             <TextBlock Text="{Binding DeadlineText, StringFormat='Срок: {0}'}" Margin="6,0,0,0"
                                                        Style="{StaticResource Task.Workspace.Meta}" />
                                         </StackPanel>

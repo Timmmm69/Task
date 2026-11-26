@@ -32,7 +32,7 @@
                         <Grid Margin="15,9,11,9">
                             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
                             <Path x:Name="SearchIcon" Data="M 11,11 L 15,15 M 12,6.5 A 5.5,5.5 0 1 1 1,6.5 A 5.5,5.5 0 1 1 12,6.5" Width="16" Height="16"
-                                  Stretch="Uniform" Stroke="{DynamicResource Task.Capsule.Muted}" StrokeThickness="1.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  Stretch="Uniform" Stroke="{DynamicResource Task.Brush.Semantic.Info}" StrokeThickness="1.2" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
                                   VerticalAlignment="Center" Margin="0,0,10,0" IsHitTestVisible="False" />
                             <ScrollViewer x:Name="PART_ContentHost" Grid.Column="1" Focusable="False"
                                           HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
@@ -61,6 +61,9 @@
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="SearchIcon" Property="Stroke" Value="{DynamicResource Task.Brush.Text.Disabled}"/>
+                        </Trigger>
                         <Trigger Property="Text" Value="">
                             <Setter TargetName="SearchPlaceholder" Property="Visibility" Value="Visible"/>
                             <Setter TargetName="SearchHint" Property="Visibility" Value="{DynamicResource Task.Search.EmptyHintVisibility}"/>

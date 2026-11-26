@@ -163,7 +163,7 @@
                                 </DockPanel.Style>
                                 <Path Data="{Binding IconKey, Converter={StaticResource Task.IconKeyToGeometryConverter}}"
                                       Width="18" Height="18" Stretch="Uniform" Margin="2,0"
-                                      Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                      Style="{StaticResource Task.Navigation.Icon}"
                                       IsHitTestVisible="False" />
                                 <TextBlock Text="{Binding Title}" Style="{StaticResource RailLabel}" Margin="6,0,0,0"
                                            FontSize="{DynamicResource Task.Font.Size.Body}" VerticalAlignment="Center"
@@ -251,7 +251,7 @@
                             AutomationProperties.HelpText="Команды и поиск доступных объектов. Сочетание клавиш Ctrl+K.">
                         <StackPanel Orientation="Horizontal">
                             <Path Data="{StaticResource Task.Icon.Search}" Width="17" Height="17" Stretch="Uniform"
-                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" />
+                                  Style="{StaticResource Task.Search.Icon}" />
                             <TextBlock Text="Поиск по приложению" Margin="8,0,10,0" VerticalAlignment="Center" Style="{StaticResource WideHeaderLabel}" />
                             <TextBlock Text="Ctrl+K" FontSize="11" Foreground="{DynamicResource Task.Brush.Text.Secondary}"
                                        VerticalAlignment="Center" Style="{StaticResource WideHeaderLabel}" />

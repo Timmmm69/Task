@@ -18,8 +18,10 @@
     <Color x:Key="Task.Color.Border.Strong">#B0B0B0</Color>
     <Color x:Key="Task.Color.Semantic.Critical">#D13438</Color>
     <Color x:Key="Task.Color.Semantic.CriticalSoft">#FDE7E9</Color>
-    <Color x:Key="Task.Color.Semantic.Success">#107C10</Color>
-    <Color x:Key="Task.Color.Semantic.SuccessSoft">#DFF6DD</Color>
+    <Color x:Key="Task.Color.Semantic.Info">#326C84</Color>
+    <Color x:Key="Task.Color.Semantic.InfoSoft">#EDF5F8</Color>
+    <Color x:Key="Task.Color.Semantic.Success">#28705D</Color>
+    <Color x:Key="Task.Color.Semantic.SuccessSoft">#EDF5F1</Color>
     <Color x:Key="Task.Color.Semantic.Warning">#F2A900</Color>
     <Color x:Key="Task.Color.Semantic.WarningSoft">#FFF4CE</Color>
 
@@ -40,6 +42,8 @@
     <SolidColorBrush x:Key="Task.Brush.Border.Strong" Color="{StaticResource Task.Color.Border.Strong}" />
     <SolidColorBrush x:Key="Task.Brush.Semantic.Critical" Color="{StaticResource Task.Color.Semantic.Critical}" />
     <SolidColorBrush x:Key="Task.Brush.Semantic.CriticalSoft" Color="{StaticResource Task.Color.Semantic.CriticalSoft}" />
+    <SolidColorBrush x:Key="Task.Brush.Semantic.Info" Color="{StaticResource Task.Color.Semantic.Info}" />
+    <SolidColorBrush x:Key="Task.Brush.Semantic.InfoSoft" Color="{StaticResource Task.Color.Semantic.InfoSoft}" />
     <SolidColorBrush x:Key="Task.Brush.Semantic.Success" Color="{StaticResource Task.Color.Semantic.Success}" />
     <SolidColorBrush x:Key="Task.Brush.Semantic.SuccessSoft" Color="{StaticResource Task.Color.Semantic.SuccessSoft}" />
     <SolidColorBrush x:Key="Task.Brush.Semantic.Warning" Color="{StaticResource Task.Color.Semantic.Warning}" />

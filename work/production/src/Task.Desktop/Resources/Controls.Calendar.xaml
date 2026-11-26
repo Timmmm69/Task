@@ -31,7 +31,7 @@
                 <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Secondary}"/>
             </Trigger>
             <Trigger Property="IsToday" Value="True">
-                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Brand.Primary}"/>
+                <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Info}"/>
                 <Setter Property="FontWeight" Value="SemiBold"/>
             </Trigger>
             <Trigger Property="IsMouseOver" Value="True">

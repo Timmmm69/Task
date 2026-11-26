@@ -37,7 +37,7 @@
                         <StaticResource ResourceKey="Task.Navigation.Group" />
                     </ListBox.GroupStyle>
                     <ListBox.ItemTemplate><DataTemplate><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                        <Path Data="{Binding IconKey,Converter={StaticResource Task.IconKeyToGeometryConverter}}" Width="20" Height="20" Stretch="Uniform" Fill="{Binding Foreground,RelativeSource={RelativeSource AncestorType=ListBoxItem}}"/>
+                        <Path Data="{Binding IconKey,Converter={StaticResource Task.IconKeyToGeometryConverter}}" Width="20" Height="20" Stretch="Uniform" Style="{StaticResource Task.Navigation.Icon}"/>
                         <TextBlock Grid.Column="1" Text="{Binding Title}" Margin="8,0,0,0" FontSize="{DynamicResource Task.Font.Size.Body}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis">
                             <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding ActualWidth,ElementName=RootWindow,Converter={StaticResource Task.WindowWidthAtLeastConverter},ConverterParameter=900}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger></Style.Triggers></Style></TextBlock.Style>
                         </TextBlock>
@@ -58,7 +58,7 @@
                         <Style.Triggers><DataTrigger Binding="{Binding SelectedSection.Route}" Value="today"><Setter Property="Text" Value="{Binding Source={x:Static sys:DateTime.Today},StringFormat='{}{0:dddd, d MMMM}',ConverterCulture=ru-RU}"/></DataTrigger></Style.Triggers>
                     </Style></TextBlock.Style></TextBlock>
                 </StackPanel>
-                <Button x:Name="PersonalSearchButton" Grid.Column="1" Click="OnSearch" Style="{StaticResource Personal.Header.Icon}" Margin="0,0,8,0" IsEnabled="{Binding CanNavigate}" ToolTip="Поиск по Варава Дент · Ctrl+K" AutomationProperties.Name="Поиск по приложению"><Path Data="{StaticResource Task.Icon.Search}" Width="19" Height="19" Stretch="Uniform" Fill="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}"/></Button>
+                <Button x:Name="PersonalSearchButton" Grid.Column="1" Click="OnSearch" Style="{StaticResource Personal.Header.Icon}" Margin="0,0,8,0" IsEnabled="{Binding CanNavigate}" ToolTip="Поиск по Варава Дент · Ctrl+K" AutomationProperties.Name="Поиск по приложению"><Path Data="{StaticResource Task.Icon.Search}" Width="19" Height="19" Stretch="Uniform" Style="{StaticResource Task.Search.Icon}"/></Button>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,12,0" Style="{StaticResource Personal.Header.NotToday}"><Ellipse Width="9" Height="9" Fill="{DynamicResource Task.Brush.Semantic.Success}" Margin="0,0,7,0"/><TextBlock Text="На этом компьютере" Style="{StaticResource Task.Shell.StatusText}"/></StackPanel>
                 <Button x:Name="PersonalNotificationsButton" Grid.Column="3" Click="OnNotifications" Style="{StaticResource Personal.Header.Icon}" IsEnabled="{Binding CanNavigate}" ToolTip="Уведомления" AutomationProperties.Name="Уведомления"><Path Data="{StaticResource Task.Icon.Notifications}" Width="20" Height="20" Stretch="Uniform" Fill="{Binding Foreground,RelativeSource={RelativeSource AncestorType=Button}}"/></Button>
             </Grid>

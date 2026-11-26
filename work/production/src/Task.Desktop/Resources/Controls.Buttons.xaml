@@ -4,13 +4,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Control">
-                    <Border Margin="-3"
+                    <Border x:Name="FocusBorder" Margin="-3"
                             BorderBrush="{DynamicResource Task.Brush.Text.Primary}"
                             BorderThickness="{DynamicResource Task.Thickness.Focus}"
                             CornerRadius="{DynamicResource Task.Radius.Control}" />
                     <ControlTemplate.Triggers>
                         <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
-                            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            <Setter TargetName="FocusBorder" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

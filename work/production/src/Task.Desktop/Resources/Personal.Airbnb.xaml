@@ -16,6 +16,17 @@
     </ControlTemplate.Triggers>
    </ControlTemplate>
   <Style x:Key="Personal.Airbnb.Muted" TargetType="TextBlock"><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Secondary}"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
+  <Style x:Key="Personal.Airbnb.TaskStatus" TargetType="TextBlock" BasedOn="{StaticResource Personal.Airbnb.Muted}">
+   <Style.Triggers>
+    <MultiDataTrigger>
+     <MultiDataTrigger.Conditions>
+      <Condition Binding="{Binding Source.Status}" Value="Completed"/>
+      <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+     </MultiDataTrigger.Conditions>
+     <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Success}"/>
+    </MultiDataTrigger>
+   </Style.Triggers>
+  </Style>
   <Style x:Key="Personal.Airbnb.Heading" TargetType="TextBlock"><Setter Property="FontSize" Value="22"/><Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}"/><Setter Property="TextWrapping" Value="Wrap"/></Style>
   <Style x:Key="Personal.Airbnb.Pill" TargetType="Button">
    <Setter Property="Background" Value="White"/><Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Ink}"/>
@@ -47,7 +58,9 @@
 </Style>
 <ControlTemplate x:Key="Personal.Airbnb.NavigationTemplate" TargetType="ListBoxItem">
                     <Border x:Name="TodayNav" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="12" Padding="{TemplateBinding Padding}" Margin="0,2"><ContentPresenter VerticalAlignment="Center"/></Border>
-                    <ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/><Setter TargetName="TodayNav" Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Hairline}"/><Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/></Trigger><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="TodayNav" Property="BorderBrush" Value="#222222"/></Trigger></ControlTemplate.Triggers>
+                    <ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/><Setter TargetName="TodayNav" Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Info}"/><Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TodayNav" Property="Background" Value="#F7F7F7"/></Trigger><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="TodayNav" Property="BorderBrush" Value="#222222"/></Trigger>
+                        <Trigger Property="IsEnabled" Value="False"><Setter TargetName="TodayNav" Property="BorderBrush" Value="{DynamicResource Task.Brush.Border.Default}"/><Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}"/></Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
 <!-- Shared compact browser rows; opt-in so existing screens retain their layout. -->
 <Style x:Key="Personal.Airbnb.BrowserRow" TargetType="ListBoxItem">

@@ -156,12 +156,12 @@
                     <Setter Property="Foreground" Value="{StaticResource Personal.Airbnb.Secondary}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsToday}" Value="True">
-                    <Setter Property="Background" Value="{StaticResource Calendar.Rose}" />
-                    <Setter Property="Foreground" Value="{StaticResource Calendar.Coral}" />
+                    <Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.InfoSoft}" />
+                    <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Info}" />
                     <Setter Property="AutomationProperties.ItemStatus" Value="Сегодня" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsSelectedDate}" Value="True">
-                    <Setter Property="BorderBrush" Value="{StaticResource Calendar.Coral}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Info}" />
                     <Setter Property="AutomationProperties.ItemStatus" Value="Выбранная дата" />
                 </DataTrigger>
             </Style.Triggers>
@@ -554,7 +554,7 @@
                                                         <Border.Style>
                                                             <Style TargetType="Border">
                                                                 <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Background" Value="#13B5394E" /></DataTrigger>
+                                                                    <DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Background" Value="{DynamicResource Task.Brush.Surface.Subtle}" /></DataTrigger>
                                                                 </Style.Triggers>
                                                             </Style>
                                                         </Border.Style>

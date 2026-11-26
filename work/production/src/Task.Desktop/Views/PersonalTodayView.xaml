@@ -28,7 +28,7 @@
     <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition x:Name="DetailsColumn" Width="320"/></Grid.ColumnDefinitions>
     <StackPanel Margin="0,0,24,0">
      <Grid Margin="0,0,0,16"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-      <StackPanel HorizontalAlignment="Left"><TextBlock Text="Ваши задачи" Style="{StaticResource Personal.Airbnb.Heading}"/><Border Height="2" Background="#222222" Margin="0,12,0,0"/></StackPanel>
+      <StackPanel HorizontalAlignment="Left"><TextBlock Text="Ваши задачи" Style="{StaticResource Personal.Airbnb.Heading}"/><Border Height="2" Background="{DynamicResource Task.Brush.Semantic.Info}" Margin="0,12,0,0"/></StackPanel>
       <Button Grid.Column="1" Command="{Binding RefreshCommand}" Style="{StaticResource Personal.Airbnb.Pill}" Padding="12,8" BorderThickness="0" ToolTip="Обновить список" AutomationProperties.Name="Обновить задачи на сегодня"><Path Data="{StaticResource Task.Icon.Refresh}" Fill="#222222" Width="18" Height="18" Stretch="Uniform"/></Button>
      </Grid>
      <ListBox x:Name="TodayTasks" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}" IsEnabled="{Binding CanSelectTask}"

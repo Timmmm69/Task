@@ -116,6 +116,9 @@
                             <Setter Property="FontWeight" Value="{DynamicResource Task.Font.Weight.Semibold}" />
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Task.Brush.Surface.Selected}" />
                         </Trigger>
+                        <DataTrigger Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+                        </DataTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Foreground" Value="{DynamicResource Task.Brush.Text.Disabled}" />
                             <Setter TargetName="Chrome" Property="Opacity" Value="0.5" />
@@ -141,6 +144,15 @@
                 <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
                 <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True" />
+                    <Condition Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="True" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
             </MultiDataTrigger>
         </Style.Triggers>
     </Style>

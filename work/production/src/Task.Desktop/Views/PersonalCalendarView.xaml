@@ -11,7 +11,14 @@
         <DataTemplate x:Key="CompactEntry">
             <Button Command="{Binding DataContext.SelectItemCommand,RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"
                 Style="{StaticResource Personal.Calendar.Entry}" Margin="0,0,0,3" ToolTip="{Binding AutomationName}" AutomationProperties.Name="{Binding AutomationName}">
-                <TextBlock TextTrimming="CharacterEllipsis"><Run Text="{Binding Source.Status,Converter={StaticResource Value},ConverterParameter=StatusSymbol,Mode=OneWay}"/><Run Text="{Binding IsCalendarEvent,Converter={StaticResource Value},ConverterParameter=Symbol,Mode=OneWay}"/><Run Text=" "/><Run Text="{Binding Title,Mode=OneWay}"/></TextBlock>
+                <TextBlock TextTrimming="CharacterEllipsis"><Run Text="{Binding Source.Status,Converter={StaticResource Value},ConverterParameter=StatusSymbol,Mode=OneWay}">
+                    <Run.Style><Style TargetType="Run"><Style.Triggers>
+                        <MultiDataTrigger><MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding Source.Status}" Value="completed"/>
+                            <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                        </MultiDataTrigger.Conditions><Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Success}"/></MultiDataTrigger>
+                    </Style.Triggers></Style></Run.Style>
+                </Run><Run Text="{Binding IsCalendarEvent,Converter={StaticResource Value},ConverterParameter=Symbol,Mode=OneWay}"/><Run Text=" "/><Run Text="{Binding Title,Mode=OneWay}"/></TextBlock>
             </Button>
         </DataTemplate>
         <DataTemplate x:Key="DayHeader"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
@@ -23,13 +30,21 @@
                         <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center"/></Border>
                         <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocused" Value="True"><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{StaticResource Personal.Airbnb.Soft}"/></Trigger></ControlTemplate.Triggers>
                     </ControlTemplate></Setter.Value></Setter>
-                    <Style.Triggers><DataTrigger Value="True"><DataTrigger.Binding><MultiBinding Converter="{StaticResource SelectedDate}"><Binding Path="Date"/><Binding Path="DataContext.SelectedDate" ElementName="Surface"/></MultiBinding></DataTrigger.Binding><Setter Property="BorderBrush" Value="{StaticResource Personal.Airbnb.Ink}"/></DataTrigger></Style.Triggers>
+                    <Style.Triggers><DataTrigger Value="True"><DataTrigger.Binding><MultiBinding Converter="{StaticResource SelectedDate}"><Binding Path="Date"/><Binding Path="DataContext.SelectedDate" ElementName="Surface"/></MultiBinding></DataTrigger.Binding><Setter Property="BorderBrush" Value="{DynamicResource Task.Brush.Semantic.Info}"/></DataTrigger></Style.Triggers>
                 </Style></Button.Style>
                 <StackPanel HorizontalAlignment="Center">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><TextBlock Text="{Binding DayName}" FontWeight="Normal" Foreground="{StaticResource Personal.Airbnb.Secondary}"/><TextBlock Text="{Binding Items.Count,StringFormat=' · {0}'}" FontWeight="Normal" Foreground="{StaticResource Personal.Airbnb.Secondary}"/></StackPanel>
                     <Border Width="29" Height="29" CornerRadius="15" Margin="0,3,0,0">
-                        <Border.Style><Style TargetType="Border"><Style.Triggers><DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Background" Value="{StaticResource Personal.Airbnb.Ink}"/></DataTrigger></Style.Triggers></Style></Border.Style>
-                        <TextBlock Text="{Binding DayNumberText}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Foreground" Value="White"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+                        <Border.Style><Style TargetType="Border"><Style.Triggers><DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Background" Value="{DynamicResource Task.Brush.Semantic.Info}"/></DataTrigger>
+                            <MultiDataTrigger><MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsToday}" Value="True"/>
+                                <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"/>
+                            </MultiDataTrigger.Conditions><Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/></MultiDataTrigger></Style.Triggers></Style></Border.Style>
+                        <TextBlock Text="{Binding DayNumberText}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"><TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers><DataTrigger Binding="{Binding IsToday}" Value="True"><Setter Property="Foreground" Value="White"/></DataTrigger>
+                            <MultiDataTrigger><MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsToday}" Value="True"/>
+                                <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="True"/>
+                            </MultiDataTrigger.Conditions><Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/></MultiDataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
                     </Border>
                 </StackPanel>
             </Button>
@@ -127,7 +142,14 @@
                                                         <Button Command="{Binding DataContext.SelectItemCommand,ElementName=Surface}" CommandParameter="{Binding Item}" Style="{StaticResource Personal.Calendar.TimelineEntry}" ToolTip="{Binding Item.AutomationName}" AutomationProperties.Name="{Binding Item.AutomationName}" AutomationProperties.AutomationId="PersonalTimelineItem">
                                                             <Grid ClipToBounds="True"><Grid.RenderTransform><TranslateTransform><TranslateTransform.Y><MultiBinding Converter="{StaticResource LabelOffset}"><Binding Path="VerticalOffset" ElementName="TimelineScroll"/><Binding Path="TimelineTop"/><Binding Path="TimelineHeight"/></MultiBinding></TranslateTransform.Y></TranslateTransform></Grid.RenderTransform><Grid.RowDefinitions><RowDefinition Height="15"/><RowDefinition Height="*"/></Grid.RowDefinitions>
                                                                 <TextBlock FontSize="10" TextTrimming="CharacterEllipsis"><Run Text="{Binding Item.IsCalendarEvent,Converter={StaticResource Value},ConverterParameter=Symbol,Mode=OneWay}"/><Run Text=" "/><Run Text="{Binding Item.TimeText,Mode=OneWay}"/></TextBlock>
-                                                                <TextBlock Grid.Row="1" TextWrapping="Wrap" FontWeight="Bold" FontSize="12" TextTrimming="CharacterEllipsis" MaxHeight="48" VerticalAlignment="Top"><Run Text="{Binding Item.Source.Status,Converter={StaticResource Value},ConverterParameter=StatusSymbol,Mode=OneWay}"/><Run Text="{Binding Item.HasConflict,Converter={StaticResource Value},ConverterParameter=Conflict,Mode=OneWay}"/><Run Text="{Binding Item.Title,Mode=OneWay}"/></TextBlock>
+                                                                <TextBlock Grid.Row="1" TextWrapping="Wrap" FontWeight="Bold" FontSize="12" TextTrimming="CharacterEllipsis" MaxHeight="48" VerticalAlignment="Top"><Run Text="{Binding Item.Source.Status,Converter={StaticResource Value},ConverterParameter=StatusSymbol,Mode=OneWay}">
+                    <Run.Style><Style TargetType="Run"><Style.Triggers>
+                        <MultiDataTrigger><MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding Item.Source.Status}" Value="completed"/>
+                            <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False"/>
+                        </MultiDataTrigger.Conditions><Setter Property="Foreground" Value="{DynamicResource Task.Brush.Semantic.Success}"/></MultiDataTrigger>
+                    </Style.Triggers></Style></Run.Style>
+                </Run><Run Text="{Binding Item.HasConflict,Converter={StaticResource Value},ConverterParameter=Conflict,Mode=OneWay}"/><Run Text="{Binding Item.Title,Mode=OneWay}"/></TextBlock>
                                                             </Grid>
                                                         </Button>
                                                     </DataTemplate></ItemsControl.ItemTemplate>
