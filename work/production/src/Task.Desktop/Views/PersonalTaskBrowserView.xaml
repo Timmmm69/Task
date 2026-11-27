@@ -13,7 +13,7 @@
          <MenuItem Header="Применить" Command="{Binding ApplyMyViewCommand}" AutomationProperties.Name="Применить Мой вид"/>
          <MenuItem Header="Сохранить текущий вид" Command="{Binding SaveMyViewCommand}" AutomationProperties.Name="Сохранить Мой вид"/>
          <Separator/>
-         <MenuItem Header="Удалить" Command="{Binding DeleteMyViewCommand}" AutomationProperties.Name="Удалить Мой вид"/>
+         <MenuItem Header="Удалить сохранённый вид" Command="{Binding DeleteMyViewCommand}"/>
      </MenuItem>
  </Menu>
  <Button Content="Сбросить" Click="OnReset" VerticalAlignment="Bottom" Margin="0,0,0,8"/>

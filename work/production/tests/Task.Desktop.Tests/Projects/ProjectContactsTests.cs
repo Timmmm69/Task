@@ -23,6 +23,24 @@ public sealed class ProjectContactsTests
     }
 
     [Fact]
+    public async AsyncTask NameLinkOpensClickedCompanyAndRejectsAnObsoleteRow()
+    {
+        var project = ProjectFilesTests.Project();
+        var api = new Client();
+        api.Rows.AddRange([api.Link(project.Id, api.Contact.Id), api.Link(project.Id, api.Company.Id)]);
+        using var vm = Create(api, project);
+        await vm.RefreshCommand.ExecuteAsync();
+        var company = vm.Items[1];
+        Assert.Equal(api.Contact.Id, vm.Selected!.Target!.Id);
+        Guid? opened = null;
+        vm.OpenObjectRequested += (_, id) => opened = id;
+        Assert.True(await vm.NavigateCommand.ExecuteAsync(company));
+        Assert.Equal(api.Company.Id, opened);
+        await vm.RefreshCommand.ExecuteAsync();
+        Assert.False(await vm.NavigateCommand.ExecuteAsync(company));
+    }
+
+    [Fact]
     public async AsyncTask LoadsContactAndCompanyNamesWithTypes_OnlyOutgoingProjectContactLinks()
     {
         var project = ProjectFilesTests.Project(); var api = new Client();

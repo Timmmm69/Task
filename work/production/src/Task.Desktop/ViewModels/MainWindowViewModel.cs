@@ -41,7 +41,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         _logout = logout;
         Tasks = tasks;
         if (tasks is not null && viewState is not null) tasks.AttachViewState(viewState);
-        MonthlyPlan = tasks?.CreateMonthlyPlan(() => IsConnected, OpenMonthlyTaskAsync);
+        MonthlyPlan = tasks?.CreateMonthlyPlan(() => IsConnected, OpenTaskCardAsync);
         if (MonthlyPlan is { } monthlyPlan) monthlyPlan.PropertyChanged += OnMonthlyPlanPropertyChanged;
         Calendar = calendar;
         Today = today;
@@ -51,6 +51,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
         Administration = administration;
         Inventory = inventory;
         _connectivity = connectivity;
+        OpenRelatedTaskCommand = new AsyncCommand((item, token) => OpenTaskCardAsync(((TaskItemViewModel)item!).Id, token), CanOpenRelatedTask);
         AddProjectTaskCommand = new AsyncCommand(OpenProjectTaskAsync, _ => CanAddProjectTask);
         NewTaskCommand = new AsyncCommand(OpenNewTaskAsync,
             _ => Tasks?.CanCreateFromShell == true && IsConnected);
@@ -245,7 +246,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private void OpenTodayItem(object? item) => _ = OpenTodayItemAsync(item);
 
-    private async global::System.Threading.Tasks.Task<bool> OpenMonthlyTaskAsync(Guid id, CancellationToken token)
+    private async global::System.Threading.Tasks.Task<bool> OpenTaskCardAsync(Guid id, CancellationToken token)
     {
         if (Tasks is not { CanOpenFromMonthlyPlan: true } tasks) return false;
         SelectedSection = Sections.First(section => section.Route == "tasks");
@@ -512,6 +513,7 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IDisposable
 
         LogoutCommand.Dispose();
         AddProjectTaskCommand.Dispose();
+        OpenRelatedTaskCommand.Dispose();
         if (Workday is not null && WorkHub is not null) WorkHub.UserSettingsApplied -= Workday.UpdateSettings;
         Workday?.Dispose();
         WorkPreferences?.Dispose();

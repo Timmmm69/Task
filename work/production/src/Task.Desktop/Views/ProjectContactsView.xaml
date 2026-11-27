@@ -17,7 +17,15 @@
     <Setter Property="AutomationProperties.Name"><Setter.Value><MultiBinding StringFormat="{}{0}, {1}"><Binding Path="Title"/><Binding Path="TypeLabel"/></MultiBinding></Setter.Value></Setter>
    </Style></ListBox.ItemContainerStyle>
    <ListBox.ItemTemplate><DataTemplate><StackPanel Margin="4">
-    <TextBlock Text="{Binding Title}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+    <TextBlock FontWeight="SemiBold" TextWrapping="Wrap">
+     <TextBlock.Style><Style TargetType="TextBlock"><Style.Triggers>
+      <DataTrigger Binding="{Binding CanNavigate}" Value="False"><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+     </Style.Triggers></Style></TextBlock.Style>
+     <Hyperlink Command="{Binding DataContext.NavigateCommand,RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"><Run Text="{Binding Title,Mode=OneWay}"/></Hyperlink>
+    </TextBlock>
+    <TextBlock Text="{Binding Title}" TextWrapping="Wrap"><TextBlock.Style><Style TargetType="TextBlock">
+     <Setter Property="Visibility" Value="Collapsed"/><Style.Triggers><DataTrigger Binding="{Binding CanNavigate}" Value="False"><Setter Property="Visibility" Value="Visible"/></DataTrigger></Style.Triggers>
+    </Style></TextBlock.Style></TextBlock>
     <TextBlock Text="{Binding TypeLabel}" Foreground="{DynamicResource Task.Brush.Text.Secondary}"/>
    </StackPanel></DataTemplate></ListBox.ItemTemplate>
   </ListBox>

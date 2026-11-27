@@ -502,7 +502,9 @@
                                                         </Grid.ColumnDefinitions>
                                                         <Path Data="{StaticResource Task.Icon.Tasks}" Width="18" Height="18" Stretch="Uniform" VerticalAlignment="Top" Fill="{DynamicResource Task.Brush.Text.Secondary}"/>
                                                         <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                                                            <TextBlock Text="{Binding Title}" FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap"/>
+                                                            <TextBlock FontWeight="{DynamicResource Task.Font.Weight.Semibold}" TextWrapping="Wrap">
+                                                                <Hyperlink Command="{Binding DataContext.OpenRelatedTaskCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"><Run Text="{Binding Title, Mode=OneWay}"/></Hyperlink>
+                                                            </TextBlock>
                                                             <TextBlock Text="{Binding StatusText}" Style="{StaticResource Task.Inspector.FactLabel}" Margin="0,4,0,0"/>
                                                         </StackPanel>
                                                     </Grid>

@@ -422,6 +422,25 @@ public sealed partial class WorkHubViewModelTests
     }
 
     [Fact]
+    public async System.Threading.Tasks.Task NotificationEmptyRequiresConfirmedReadAndRecoversAfterDenial()
+    {
+        DesktopWorkResult<IReadOnlyList<DesktopNotification>> result = new DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Succeeded([]);
+        using var vm = new WorkHubViewModel(new FakeClient { NotificationHandler = _ => System.Threading.Tasks.Task.FromResult(result) }, ["Notification.ReadOwn"]);
+        Assert.False(vm.ShowNotificationEmpty);
+        await vm.EnsureNotificationsAsync();
+        Assert.True(vm.ShowNotificationEmpty);
+        result = new DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Forbidden();
+        await vm.EnsureNotificationsAsync();
+        Assert.False(vm.ShowNotificationEmpty);
+        Assert.True(vm.HasFeedback);
+        result = new DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Succeeded([]);
+        await vm.EnsureNotificationsAsync();
+        Assert.True(vm.ShowNotificationEmpty);
+        vm.UpdateCapabilities([]);
+        Assert.False(vm.ShowNotificationEmpty);
+    }
+
+    [Fact]
     public async System.Threading.Tasks.Task NotificationRefreshCannotRestoreContentAfterReadPermissionIsRevoked()
     {
         var pending = new TaskCompletionSource<DesktopWorkResult<IReadOnlyList<DesktopNotification>>>();

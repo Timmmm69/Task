@@ -23,7 +23,7 @@
                 <TextBox Width="64" MaxLength="4" Text="{Binding YearText, UpdateSourceTrigger=PropertyChanged}"
                          state:FormKeyboard.Capture="{Binding ApplyYearCommand}" Style="{StaticResource Task.Input.Text}"
                          Margin="0,0,6,6" AutomationProperties.Name="Год" AutomationProperties.AutomationId="MonthlyYear"/>
-                <Button Content="Выбрать год" Command="{Binding ApplyYearCommand}" Style="{StaticResource Task.Button.Secondary}"
+                <Button Content="Применить год" Command="{Binding ApplyYearCommand}" Style="{StaticResource Task.Button.Secondary}"
                         Margin="0,0,6,6" AutomationProperties.AutomationId="MonthlyApplyYear"/>
                 <Button Content="›" Width="42" FontSize="20" Padding="0" Command="{Binding NextCommand}" Style="{StaticResource Task.Button.Secondary}"
                         Margin="0,0,6,6" AutomationProperties.Name="Следующий месяц" AutomationProperties.AutomationId="MonthlyNext"/>

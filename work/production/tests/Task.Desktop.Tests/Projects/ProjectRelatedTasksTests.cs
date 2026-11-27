@@ -23,6 +23,30 @@ public sealed partial class ProjectsViewModelTests
     private static PageResult RelatedPage(string? cursor = null, params DesktopTaskDto[] items) => new PageResult.Succeeded(new(items, cursor, null));
 
     [Fact]
+    public async AsyncTask RelatedTaskLinkOpensConfirmedCardForReadOnlyUser()
+    {
+        var api = new TasksViewModelTests.FakeTasksApiClient();
+        var projects = RelatedModel(api);
+        var tasks = new TasksViewModel(api, ["Task.Read"]);
+        using var shell = new MainWindowViewModel(new Uri("https://task.example.test"), null, tasks, projects: projects);
+        shell.SelectedSection = shell.Sections.Single(item => item.Route == "projects");
+        await projects.CurrentDetailsOperation;
+        var item = Task(Guid.NewGuid(), ProjectId, "Из проекта");
+        api.EnqueuePage(RelatedPage(null, item));
+        await projects.LoadRelatedTasksCommand.ExecuteAsync();
+        var row = Assert.Single(projects.RelatedTasks);
+        Assert.False(shell.OpenRelatedTaskCommand.CanExecute(new TaskItemViewModel(item)));
+        api.DetailResult = new DesktopTasksApiResult<DesktopTaskDto>.Succeeded(item);
+        api.EnqueuePage(RelatedPage(null, item));
+        var detailsOpened = false;
+        tasks.RowDetailsRequested += () => detailsOpened = true;
+        Assert.True(await shell.OpenRelatedTaskCommand.ExecuteAsync(row));
+        Assert.Equal("tasks", shell.SelectedSection.Route);
+        Assert.Equal(item.Id, tasks.SelectedItem?.Id);
+        Assert.True(detailsOpened);
+    }
+
+    [Fact]
     public async AsyncTask RelatedTasks_ExpandedSectionStartsOncePerConfirmedProjectAndIgnoresLatePages()
     {
         var tasks = new TasksViewModelTests.FakeTasksApiClient();

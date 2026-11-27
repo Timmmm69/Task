@@ -84,6 +84,8 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     private long _activationGeneration;
     private bool _disposed;
     private long _notificationAccessGeneration;
+    private long _notificationReadSequence;
+    private bool _notificationListConfirmed;
     private string _settingsSection = "Профиль";
 
     public WorkHubViewModel(IDesktopWorkApiClient client, IEnumerable<string>? capabilities, IFileAccessAdapter? files = null, string? serverAddress = null, bool personal = false)
@@ -151,9 +153,24 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public event Action<DesktopUserSettings>? UserSettingsApplied;
     internal bool BackgroundNotificationAccess => !_disposed && _sessionAvailable && CanReadNotifications;
     internal bool BackgroundSettingsAccess => !_disposed && _sessionAvailable && CanReadSettings;
+    private void SetNotificationListConfirmed(bool confirmed)
+    {
+        if (_notificationListConfirmed == confirmed) return;
+        _notificationListConfirmed = confirmed;
+        OnPropertyChanged(nameof(ShowNotificationEmpty));
+    }
+
+    internal void ClearUnconfirmedNotifications()
+    {
+        SetNotificationListConfirmed(false);
+        Notifications = [];
+        SelectedNotification = null;
+    }
+
     internal void ApplyBackgroundNotifications(IReadOnlyList<DesktopNotification> items)
     {
-        if (!BackgroundNotificationAccess) items = [];
+        if (!BackgroundNotificationAccess) { ClearUnconfirmedNotifications(); return; }
+        SetNotificationListConfirmed(true);
         var selected = SelectedNotification?.Id;
         Notifications = items;
         SelectedNotification = items.FirstOrDefault(n => n.Id == selected) ?? items.FirstOrDefault();
@@ -207,7 +224,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         }
     }
     public IReadOnlyList<DesktopSearchResult> SearchResults { get => _searchResults; private set { if (SetProperty(ref _searchResults, value)) NotifySearchPresentation(); } }
-    public IReadOnlyList<DesktopNotification> Notifications { get => _notifications; private set { if (SetProperty(ref _notifications, value)) { OnPropertyChanged(nameof(UnreadCount)); OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); MarkAllReadCommand.RaiseCanExecuteChanged(); } } }
+    public IReadOnlyList<DesktopNotification> Notifications { get => _notifications; private set { if (SetProperty(ref _notifications, value)) { OnPropertyChanged(nameof(UnreadCount)); OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); OnPropertyChanged(nameof(ShowNotificationEmpty)); MarkAllReadCommand.RaiseCanExecuteChanged(); } } }
     public IReadOnlyList<DesktopLifecycleItem> LifecycleItems { get => _lifecycleItems; private set { if (SetProperty(ref _lifecycleItems, value)) NotifyLifecyclePresentation(); } }
     public int UnreadCount => Notifications.Count(n => n.Status is not ("read" or "dismissed"));
     public CatalogNodeViewModel? SelectedCatalogItem
@@ -253,8 +270,10 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         ? $"{SearchResultCount} доступных результатов из последнего подтверждённого кэша"
         : $"{SearchResultCount} доступных результатов · область доступа проверена сервером";
     public IReadOnlyList<string> NotificationFilters { get; } = ["Непрочитанные", "Все"];
-    public string NotificationFilter { get => _notificationFilter; set { if (SetProperty(ref _notificationFilter, value)) { OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); } } }
+    public string NotificationFilter { get => _notificationFilter; set { if (SetProperty(ref _notificationFilter, value)) { OnPropertyChanged(nameof(VisibleNotifications)); OnPropertyChanged(nameof(HasVisibleNotifications)); OnPropertyChanged(nameof(ShowNotificationEmpty)); } } }
     public IReadOnlyList<DesktopNotification> VisibleNotifications => NotificationFilter == "Все" ? Notifications : Notifications.Where(item => item.IsUnread).ToArray();
+    public bool ShowNotificationEmpty => _notificationListConfirmed && !HasVisibleNotifications
+        && FeedbackKind is not (WorkHubFeedbackKind.Warning or WorkHubFeedbackKind.Error);
     public bool HasVisibleNotifications => VisibleNotifications.Count > 0;
     public IReadOnlyList<string> LifecycleTypeFilters => IsPersonal ? ["Все типы", "Задача", "Проект", "Файл", "Контакт"] : ["Все типы", "Задача", "Проект", "Событие", "Файл", "Контакт", "Компания", "Взаимодействие"];
     public string LifecycleQuery { get => _lifecycleQuery; set { if (SetProperty(ref _lifecycleQuery, value)) NotifyLifecyclePresentation(); } }
@@ -316,7 +335,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
     public string ServerAddress { get; }
     public string SettingsConnectionStatus => !_networkAvailable ? "Сервер недоступен · только чтение" : "Подключено · TLS обязателен";
     public string? Message { get => _message; private set => SetProperty(ref _message, value); }
-    public WorkHubFeedbackKind FeedbackKind { get => _feedbackKind; private set { if (SetProperty(ref _feedbackKind, value)) { OnPropertyChanged(nameof(HasFeedback)); OnPropertyChanged(nameof(IsFeedbackError)); NotifyLifecycleEmptyState(); } } }
+    public WorkHubFeedbackKind FeedbackKind { get => _feedbackKind; private set { if (SetProperty(ref _feedbackKind, value)) { OnPropertyChanged(nameof(HasFeedback)); OnPropertyChanged(nameof(IsFeedbackError)); OnPropertyChanged(nameof(ShowNotificationEmpty)); NotifyLifecycleEmptyState(); } } }
     public bool HasFeedback => !string.IsNullOrWhiteSpace(Message);
     public bool IsFeedbackError => FeedbackKind == WorkHubFeedbackKind.Error;
     public bool IsLoading => _operationDepth > 0;
@@ -438,13 +457,13 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         Locations?.SetItem(null);
         Locations?.SetItem(SelectedCatalogItem?.Item);
         UpdateLinkAccess(); SetCurrentLinkSource();
-        if (!CanReadNotifications) ApplyBackgroundNotifications([]);
+        if (!CanReadNotifications) ClearUnconfirmedNotifications();
         if (!CanManageCorporateReminders) ClearCorporateReminders();
         OnPropertyChanged(nameof(CanManageCorporateReminders));
         NotificationAccessChanged?.Invoke();
         NotifyCommands();
     }
-    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { Companies?.InvalidateScope(); InvalidateContactScope(); ResetListPagination(); LifecycleItems = []; ApplyBackgroundNotifications([]); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } UpdateLinkAccess(); SetCurrentLinkSource(); NotificationAccessChanged?.Invoke(); NotifyCommands(); }
+    public void UpdateSessionState(bool available) { ++_notificationAccessGeneration; _sessionAvailable = available; if (!available) { Companies?.InvalidateScope(); InvalidateContactScope(); ResetListPagination(); LifecycleItems = []; ClearUnconfirmedNotifications(); ClearCorporateReminders(); InvalidateSearch(); Links?.SetSource(Guid.Empty, 0); SetFeedback("Сессия завершена. Выполните вход снова.", WorkHubFeedbackKind.Error); _activation?.Cancel(); } UpdateLinkAccess(); SetCurrentLinkSource(); NotificationAccessChanged?.Invoke(); NotifyCommands(); }
     public void UpdateConnectivity(bool available)
     {
         if (_networkAvailable == available) return;
@@ -470,6 +489,7 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
 
     public async System.Threading.Tasks.Task EnsureNotificationsAsync(CancellationToken cancellationToken = default)
     {
+        SetNotificationListConfirmed(false);
         if (!_sessionAvailable || !_networkAvailable || !CanReadNotifications)
         {
             if (_sessionAvailable && _networkAvailable && CanManageCorporateReminders) { await RefreshRemindersAsync(cancellationToken); return; }
@@ -481,8 +501,13 @@ public sealed partial class WorkHubViewModel : ViewModelBase, IDisposable
         try
         {
             var generation = _notificationAccessGeneration;
+            var sequence = ++_notificationReadSequence;
             var result = await _client.GetNotificationsAsync(cancellationToken);
-            if (!BackgroundNotificationAccess || generation != _notificationAccessGeneration || cancellationToken.IsCancellationRequested) return;
+            if (!BackgroundNotificationAccess || generation != _notificationAccessGeneration
+                || sequence != _notificationReadSequence || cancellationToken.IsCancellationRequested) return;
+            if (result is DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Forbidden)
+                ClearUnconfirmedNotifications();
+            SetNotificationListConfirmed(result is DesktopWorkResult<IReadOnlyList<DesktopNotification>>.Succeeded);
             Apply(result, value =>
             {
                 Notifications = value;

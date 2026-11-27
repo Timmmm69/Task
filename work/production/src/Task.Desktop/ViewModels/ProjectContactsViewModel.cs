@@ -44,7 +44,9 @@ public sealed class ProjectContactsViewModel : ViewModelBase, IDisposable
             return RemoveAsync(source, link, ct);
         },
             _ => CanMutate("ObjectLink.Delete") && ConfirmedSelection);
-        NavigateCommand = new((_, ct) => UseTargetAsync(ct), _ => CanUse && !IsBusy && _snapshot && ConfirmedSelection && Selected!.CanNavigate);
+        NavigateCommand = new((parameter, ct) => UseTargetAsync((ProjectContactItem?)parameter ?? Selected!, ct),
+            parameter => (parameter ?? Selected) is ProjectContactItem { CanNavigate: true } row
+                && CanUse && !IsBusy && _snapshot && IsCurrentLink(row));
         foreach (var command in Commands) command.CanExecuteChanged += ExecutionChanged;
         Picker.PropertyChanged += PickerChanged;
         _linkState.Changed += NotifyCommands;
@@ -71,7 +73,8 @@ public sealed class ProjectContactsViewModel : ViewModelBase, IDisposable
     public bool IsBusy => Commands.Any(command => command.IsExecuting);
     public bool CanRead => _ready && Has("Project.Read") && Has("Contact.Read") && Has("ObjectLink.Read");
     private bool CanUse => !_disposed && CanRead && _online && _project is not null;
-    private bool ConfirmedSelection => Selected is { } row && Items.Any(item => ReferenceEquals(item, row))
+    private bool ConfirmedSelection => Selected is { } row && IsCurrentLink(row);
+    private bool IsCurrentLink(ProjectContactItem row) => Items.Any(item => ReferenceEquals(item, row))
         && row.Link.SourceObjectId == _project?.Id && row.Link.LinkType == "project_contact";
     private bool CanMutate(string permission) => CanUse && _writable && _project?.LifecycleState == "active"
         && Has("Project.Update") && Has(permission) && _snapshot && _linkState.Version > 0 && !IsBusy && !_linkState.IsMutating;
@@ -174,9 +177,9 @@ public sealed class ProjectContactsViewModel : ViewModelBase, IDisposable
         finally { Section.FinishRequest(request); NotifyCommands(); }
     }
 
-    private async AsyncTask UseTargetAsync(CancellationToken ct)
+    private async AsyncTask UseTargetAsync(ProjectContactItem row, CancellationToken ct)
     {
-        var generation = _generation; var row = Selected!; var id = row.Link.TargetObjectId;
+        var generation = _generation; var id = row.Link.TargetObjectId;
         try
         {
             var result = await ResolveTargetAsync(id, row.Target!.ObjectType, ct);

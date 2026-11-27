@@ -30,7 +30,7 @@ public partial class MainWindow
                 var hub = _viewModel.WorkHub!;
                 _notificationAgent = new(client, _toast, _notificationJournal,
                     () => hub.BackgroundNotificationAccess, () => hub.BackgroundSettingsAccess, hub.ApplyBackgroundNotifications,
-                    canSnooze: () => hub.CanManageCorporateReminders, applyAutostart: ApplyAutostart);
+                    canSnooze: () => hub.CanManageCorporateReminders, applyAutostart: ApplyAutostart, invalidateList: hub.ClearUnconfirmedNotifications);
                 hub.NotificationAccessChanged += OnNotificationAccessChanged;
                 hub.UserSettingsApplied += ApplyAutostart;
             }

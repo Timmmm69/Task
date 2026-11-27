@@ -12,6 +12,7 @@ public sealed class CorporateNotificationAgent : IDisposable
     private readonly Func<bool> _canSnooze;
     private readonly Action<IReadOnlyList<DesktopNotification>> _update;
     private readonly Action<bool>? _applyAutostart;
+    private readonly Action? _invalidateList;
     private readonly TimeProvider _clock;
     private readonly DateTimeOffset _startedAt;
     private readonly CancellationTokenSource _lifetime = new();
@@ -21,12 +22,13 @@ public sealed class CorporateNotificationAgent : IDisposable
     public CorporateNotificationAgent(IDesktopWorkApiClient client, IWindowsNotificationPresenter presenter,
         NotificationPresentationJournal journal, Func<bool> canRead, Func<bool> canReadSettings,
         Action<IReadOnlyList<DesktopNotification>> update, TimeProvider? clock = null, Func<bool>? canSnooze = null,
-        Action<bool>? applyAutostart = null)
+        Action<bool>? applyAutostart = null, Action? invalidateList = null)
     {
         _client = client; _presenter = presenter; _journal = journal; _canRead = canRead;
         _canSnooze = canSnooze ?? (() => false);
         _canReadSettings = canReadSettings; _update = update; _clock = clock ?? TimeProvider.System; _startedAt = _clock.GetUtcNow();
         _applyAutostart = applyAutostart;
+        _invalidateList = invalidateList;
     }
     public bool SessionExpired { get; private set; }
     public async System.Threading.Tasks.Task RunPassAsync(CancellationToken cancellationToken = default)
@@ -140,7 +142,8 @@ public sealed class CorporateNotificationAgent : IDisposable
         _items.Clear();
         _revision = null;
         _presenter.Clear();
-        _update([]);
+        if (_invalidateList is not null) _invalidateList();
+        else _update([]);
     }
 
     private void Expire() { SessionExpired = true; ClearNotifications(); }

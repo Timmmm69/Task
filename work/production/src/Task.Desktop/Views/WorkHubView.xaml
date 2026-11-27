@@ -673,7 +673,7 @@
                                     <Style TargetType="Border" BasedOn="{StaticResource Task.State.Panel}">
                                         <Setter Property="Visibility" Value="Collapsed"/>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding HasVisibleNotifications}" Value="False">
+                                            <DataTrigger Binding="{Binding ShowNotificationEmpty}" Value="True">
                                                 <Setter Property="Visibility" Value="Visible"/>
                                             </DataTrigger>
                                         </Style.Triggers>

@@ -81,7 +81,11 @@
     #inventoryHeading,#supplierHeading{scroll-margin-top:calc(80px + 16px)}
     .supplier-item{cursor:default}
     button.supplier-name{display:block;max-width:100%;padding:0;border:0;background:none;color:inherit;text-align:left}
-    button.supplier-name:hover,.catalog-line-name.supplier-name:hover{text-decoration:underline}
+    button.supplier-name,button.warning-name{text-decoration:underline;text-underline-offset:.16em}
+    button.warning-name{border:0;padding:0;background:none;color:inherit;text-align:left}
+    [data-material]{scroll-margin-top:96px}
+    .supplier-value{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text}
+    .entry-table [aria-invalid="true"],.field [aria-invalid="true"]{outline:2px solid var(--red)}
     .supplier-toggle{border:0;background:none;border-radius:8px;padding:8px;color:#666}
     .supplier-toggle:hover{background:var(--soft)}
     .supplier-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -206,7 +210,7 @@
               sum+=taken*lot.unitPrice;
               allocations.push({lineId:line.id,materialId:line.materialId,supplierId:lot.supplierId,quantity:taken,unitPrice:lot.unitPrice,receiptId:lot.receiptId});
             }
-            if(needed>EPS){const mat=byId(data.materials,line.materialId);return {ok:false,error:`Недостаточно материала «${mat?.name||'Без названия'}»${line.supplierId?' у выбранного поставщика':''}.`};}
+            if(needed>EPS){const mat=byId(data.materials,line.materialId);return {ok:false,movementId:move.id,lineId:line.id,error:`Недостаточно материала «${mat?.name||'Без названия'}»${line.supplierId?' у выбранного поставщика':''}.`};}
           }
           issueCosts[move.id]=sum;issueAllocations[move.id]=allocations;
         } else return {ok:false,error:'Неизвестный тип операции.'};
@@ -247,7 +251,7 @@
     let state=emptyData(),ledger=calculateLedger(state),access=null,corporate=false,writing=false,requestId=0;
     let filter='all', search='',expandedMaterial=null,expandedSupplier=null,expandedMovement=null,showFullHistory=false;
     let mode=null,draft=null,catalogTab='materials',editingItemId=null,miniForm=null,toastTimer=null;
-    let supplierCard=null;
+    let supplierCard=null,initialDraft=null;
     const bridge=window.chrome?.webview;
     const requests=new Map();
     bridge?.addEventListener('message',event=>{
@@ -353,6 +357,21 @@
       heading.focus({preventScroll:true});
       heading.scrollIntoView({block:'start',behavior:'instant'});
     }
+    function visibleInventoryElement(selector){
+      return $$(selector).find(element=>element.getClientRects().length>0);
+    }
+    function showWarningMaterial(materialId){
+      if(!byId(state.materials,materialId))return;
+      if(!displayedMaterials().some(material=>material.id===materialId)){
+        search=$('#materialSearch').value='';
+        filter='all';
+      }
+      expandedMaterial=access.canManage?materialId:null;
+      renderInventory();
+      const row=visibleInventoryElement(`[data-material=${CSS.escape(materialId)}]`);
+      row?.focus({preventScroll:true});
+      row?.scrollIntoView({block:'start'});
+    }
     function supplierMaterialRows(mat){
       return state.suppliers.map(s=>{
         const key=mat.id+'|'+s.id;
@@ -365,7 +384,7 @@
       const rows=supplierMaterialRows(mat);
       const recent=state.movements.filter(m=>m.lines.some(l=>l.materialId===mat.id)).slice(-3).reverse();
       return `<div class="details-box"><div class="details-top"><div class="details-title">${escapeHTML(mat.name)} · цены и партии</div><div style="display:flex;gap:7px;flex-wrap:wrap"><button type="button" class="btn btn-small" data-action="open-issue" data-id="${escapeHTML(mat.id)}">${svg('minus','sm')} Списать</button><button type="button" class="btn btn-small btn-primary" data-action="open-receipt" data-id="${escapeHTML(mat.id)}">${svg('plus','sm')} Приход</button><button type="button" class="btn btn-small btn-icon" data-action="edit-material" data-id="${escapeHTML(mat.id)}" title="Изменить минимальный остаток" aria-label="Изменить минимальный остаток">${svg('settings','sm')}</button></div></div>
-      <div class="detail-grid"><div><table class="data-table"><thead><tr><th>Поставщик</th><th class="num">Остаток</th><th class="num">Посл. цена</th><th class="num">На сумму</th></tr></thead><tbody>${rows.length?rows.map(r=>`<tr><td>${escapeHTML(r.s.name)}</td><td class="num">${amount(r.data.qty)} ${escapeHTML(mat.unit)}</td><td class="num">${money(r.latest.price)}</td><td class="num">${money(r.data.value)}</td></tr>`).join(''):'<tr><td colspan="4">Поступлений пока нет</td></tr>'}</tbody></table></div>
+      <div class="detail-grid"><div><table class="data-table"><thead><tr><th>Поставщик</th><th class="num">Остаток</th><th class="num">Посл. цена</th><th class="num">На сумму</th></tr></thead><tbody>${rows.length?rows.map(r=>`<tr><td><button type="button" class="supplier-name" data-action="material-supplier" data-id="${escapeHTML(r.s.id)}" aria-haspopup="dialog">${escapeHTML(r.s.name)}</button></td><td class="num">${amount(r.data.qty)} ${escapeHTML(mat.unit)}</td><td class="num">${money(r.latest.price)}</td><td class="num">${money(r.data.value)}</td></tr>`).join(''):'<tr><td colspan="4">Поступлений пока нет</td></tr>'}</tbody></table></div>
       <div><div class="details-title" style="margin-bottom:9px">Последние движения</div>${recent.length?recent.map(op=>`<div class="journal-line"><span>${op.type==='receipt'?'Приход':'Расход'} · ${shortDate(op.date)}</span><b>${op.type==='receipt'?'+':'−'}${amount(op.lines.filter(l=>l.materialId===mat.id).reduce((a,b)=>a+b.quantity,0))} ${escapeHTML(mat.unit)}</b></div>`).join(''):'<p class="detail-note">Движений пока нет.</p>'}<p class="detail-note" style="margin-top:12px">Стоимость остатка рассчитывается по фактическим партиям, даже если один и тот же материал покупали по разным ценам.</p></div></div></div>`;
     }
     function renderInventory(){
@@ -396,7 +415,7 @@
       $('#alertCount').textContent=warnings.length?`${warnings.length} поз.`:'';
       $('#warningList').innerHTML=warnings.length?warnings.map(mat=>{
         const qty=stockInfo(mat).qty,k=risk(mat,qty),p=mat.threshold?Math.min(100,qty/mat.threshold*100):0;
-        return `<div class="warning-item"><span class="warning-dot ${k===2?'yellow':''}"></span><div style="min-width:0;flex:1"><div class="warning-name">${escapeHTML(mat.name)}</div><div class="warning-meta">${qty<=EPS?'Нет в наличии':k===1?'Ниже минимума':'Близко к минимуму'} · мин. ${amount(mat.threshold)}</div><div class="warning-bar"><span style="width:${Math.max(0,p)}%;background:${k===2?'#e4bc77':'#eaa0a9'}"></span></div></div><div class="warning-amount">${amount(qty)} <span class="unit">${escapeHTML(mat.unit)}</span></div></div>`;
+        return `<div class="warning-item"><span class="warning-dot ${k===2?'yellow':''}"></span><div style="min-width:0;flex:1"><button type="button" class="warning-name" data-action="show-warning-material" data-id="${escapeHTML(mat.id)}">${escapeHTML(mat.name)}</button><div class="warning-meta">${qty<=EPS?'Нет в наличии':k===1?'Ниже минимума':'Близко к минимуму'} · мин. ${amount(mat.threshold)}</div><div class="warning-bar"><span style="width:${Math.max(0,p)}%;background:${k===2?'#e4bc77':'#eaa0a9'}"></span></div></div><div class="warning-amount">${amount(qty)} <span class="unit">${escapeHTML(mat.unit)}</span></div></div>`;
       }).join('')+`<button type="button" class="btn btn-small" style="width:100%;margin-top:2px" data-action="open-receipt">${svg('plus','sm')} Оформить поступление</button>`:`<div class="inline-empty">Все материалы выше минимальных остатков.</div>`;
     }
     function renderSuppliers(){
@@ -456,7 +475,7 @@
     }
     function closeOverlay(){
       if(supplierCard)$$('.topbar,main,.mobile-actions').forEach(el=>el.inert=false);
-      supplierCard=null;mode=null;draft=null;miniForm=null;editingItemId=null;
+      supplierCard=null;mode=null;draft=null;initialDraft=null;miniForm=null;editingItemId=null;
       $('#overlay').classList.add('hidden');$('#overlay').setAttribute('aria-hidden','true');document.body.style.overflow='';
     }
     function dismissOverlay(){
@@ -466,6 +485,8 @@
       if(card.catalogAction){
         mode='catalog';catalogTab='suppliers';
         renderCatalog(supplierAction(card.catalogAction,card.id));
+      }else if(card.fromMaterial){
+        visibleInventoryElement(supplierAction('material-supplier',card.id))?.focus();
       }else{
         $(supplierAction('open-supplier',card.id))?.focus();
       }
@@ -481,6 +502,7 @@
     function openOperation(type,materialId=''){
       mode=type;miniForm=null;
       draft={type,date:today(),supplierId:'',invoice:'',note:'',rows:[freshRow(type,materialId)]};
+      initialDraft=JSON.stringify(draft);
       renderOperation();
     }
     function miniFormHTML(){
@@ -510,27 +532,30 @@
       const title=receipt?'Оформить приход':'Списать материалы';
       const desc=receipt?'Добавьте позиции из одной накладной. Итог рассчитается сам.':'Укажите, что израсходовали. Остатки и стоимость уменьшатся автоматически.';
       const top=receipt?`<div class="form-grid"><div class="field"><label>Поставщик *</label><select data-draft-field="supplierId">${makeSelectOptions(draft.supplierId,state.suppliers,'Выбрать поставщика')}</select><button type="button" class="mini-add" data-action="mini-supplier">+ Новый поставщик</button></div><div class="field"><label>Дата прихода *</label><input type="date" data-draft-field="date" value="${escapeHTML(draft.date)}"/></div><div class="field"><label>Номер накладной</label><input type="text" data-draft-field="invoice" value="${escapeHTML(draft.invoice)}" maxlength="80" placeholder="Например, НК-128" /></div></div>`:`<div class="form-grid issue-top"><div class="field"><label>Дата расхода *</label><input type="date" data-draft-field="date" value="${escapeHTML(draft.date)}" /></div><div class="field"><label>Комментарий (необязательно)</label><input type="text" data-draft-field="note" value="${escapeHTML(draft.note)}" maxlength="250" placeholder="Например, расход кабинетов" /></div></div>`;
-      const body=`${miniFormHTML()}${top}<div class="form-section-head"><strong>${receipt?'Позиции накладной':'Списываемые материалы'}</strong><button type="button" class="mini-add" data-action="mini-material">+ Новый материал</button></div><div id="entryRows">${receipt?receiptRowsHTML():issueRowsHTML()}</div><button type="button" class="entry-add-row" data-action="add-row">${svg('plus','sm')} Добавить строку</button><div id="draftError" class="entry-error"></div>${receipt?`<div class="field note-field"><label>Комментарий (необязательно)</label><input type="text" data-draft-field="note" value="${escapeHTML(draft.note)}" maxlength="250" placeholder="Примечание к поставке" /></div>`:`<div class="notice">${svg('info','sm')}<span>По умолчанию списываются самые ранние партии (FIFO). Если требуется списать материал конкретного поставщика, выберите его в строке.</span></div>`}`;
+      const body=`${miniFormHTML()}${top}<div class="form-section-head"><strong>${receipt?'Позиции накладной':'Списываемые материалы'}</strong><button type="button" class="mini-add" data-action="mini-material">+ Новый материал</button></div><div id="entryRows">${receipt?receiptRowsHTML():issueRowsHTML()}</div><button type="button" class="entry-add-row" data-action="add-row">${svg('plus','sm')} Добавить строку</button><div id="draftError" class="entry-error" role="alert"></div>${receipt?`<div class="field note-field"><label>Комментарий (необязательно)</label><input type="text" data-draft-field="note" value="${escapeHTML(draft.note)}" maxlength="250" placeholder="Примечание к поставке" /></div>`:`<div class="notice">${svg('info','sm')}<span>По умолчанию списываются самые ранние партии (FIFO). Если требуется списать материал конкретного поставщика, выберите его в строке.</span></div>`}`;
       const footer=`<div class="modal-footer"><div><div class="modal-total-label">${receipt?'Итого по накладной':'Стоимость списания'}</div><div class="modal-total" id="draftTotal">—</div></div><div style="display:flex;gap:9px"><button type="button" class="btn" data-action="close-modal">Отмена</button><button type="button" class="btn btn-primary" data-action="save-operation">${receipt?'Сохранить приход':'Списать'}</button></div></div>`;
       modalFrame(title,desc,body,footer);
       updateDraftTotals();
     }
     function validateDraft(){
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(draft.date))return 'Укажите дату операции.';
-      if(draft.type==='receipt'&&!byId(state.suppliers,draft.supplierId))return 'Выберите поставщика.';
-      if(draft.rows.length===0)return 'Добавьте хотя бы одну позицию.';
+      const header=(message,field)=>({message,selector:`[data-draft-field="${field}"]`});
+      const cell=(message,rowId,field)=>({message,selector:`[data-row=${CSS.escape(rowId)}] [data-row-field="${field}"]`});
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(draft.date))return header('Укажите дату операции.','date');
+      if(draft.type==='receipt'&&!byId(state.suppliers,draft.supplierId))return header('Выберите поставщика.','supplierId');
+      if(draft.rows.length===0)return {message:'Добавьте хотя бы одну позицию.',selector:'[data-action="add-row"]'};
       for(let i=0;i<draft.rows.length;i++){
         const row=draft.rows[i];
-        if(!byId(state.materials,row.materialId))return `В строке ${i+1} выберите материал.`;
-        if(row.quantity===''||!Number.isFinite(Number(row.quantity))||Number(row.quantity)<=0||Number(row.quantity)>1e9)return `Укажите корректное количество в строке ${i+1}.`;
-        if(draft.type==='receipt'&&(row.unitPrice===''||!Number.isFinite(Number(row.unitPrice))||Number(row.unitPrice)<0||Number(row.unitPrice)>1e10))return `Укажите цену в строке ${i+1}.`;
-        if(draft.type==='issue'&&row.supplierId&&!byId(state.suppliers,row.supplierId))return `Неверный поставщик в строке ${i+1}.`;
+        if(!byId(state.materials,row.materialId))return cell(`В строке ${i+1} выберите материал.`,row.id,'materialId');
+        if(row.quantity===''||!Number.isFinite(Number(row.quantity))||Number(row.quantity)<=0||Number(row.quantity)>1e9)return cell(`Укажите корректное количество в строке ${i+1}.`,row.id,'quantity');
+        if(draft.type==='receipt'&&(row.unitPrice===''||!Number.isFinite(Number(row.unitPrice))||Number(row.unitPrice)<0||Number(row.unitPrice)>1e10))return cell(`Укажите цену в строке ${i+1}.`,row.id,'unitPrice');
+        if(draft.type==='issue'&&row.supplierId&&!byId(state.suppliers,row.supplierId))return cell(`Неверный поставщик в строке ${i+1}.`,row.id,'supplierId');
       }
       if(draft.type==='issue'){
         const test=calculateLedger(state,[...state.movements,{id:'preview',type:'issue',date:draft.date,createdAt:Date.now()+1,lines:draft.rows.map(r=>({id:r.id,materialId:r.materialId,quantity:Number(r.quantity),supplierId:r.supplierId}))}]);
-        if(!test.ok)return test.error;
+        if(!test.ok)return test.movementId==='preview'&&test.lineId
+          ?cell(test.error,test.lineId,'quantity'):header(test.error,'date');
       }
-      return '';
+      return null;
     }
     function previewIssue(){
       if(draft.rows.some(r=>!byId(state.materials,r.materialId)||!Number.isFinite(Number(r.quantity))||Number(r.quantity)<=0))return {ok:false};
@@ -562,8 +587,15 @@
       updateDraftTotals();
     }
     async function saveOperation(){
-      const error=validateDraft();$('#draftError').textContent=error;
-      if(error){toast(error);return;}
+      const error=validateDraft();
+      $('#modal [aria-invalid="true"]')?.removeAttribute('aria-invalid');
+      $('#draftError').textContent=error?.message||'';
+      if(error){
+        const field=$(error.selector);
+        field?.setAttribute('aria-invalid','true');
+        field?.focus();
+        return;
+      }
       const receipt=draft.type==='receipt';
       const op={id:id(),type:draft.type,date:draft.date,createdAt:Date.now(),note:draft.note.trim(),lines:draft.rows.map(r=>receipt?{id:id(),materialId:r.materialId,quantity:Number(r.quantity),unitPrice:Number(r.unitPrice)}:{id:id(),materialId:r.materialId,quantity:Number(r.quantity),supplierId:r.supplierId||''})};
       if(receipt){op.supplierId=draft.supplierId;op.invoice=draft.invoice.trim();}
@@ -631,13 +663,14 @@
       {key:'taxDetails',label:'УНП / реквизиты',max:250,wide:true,multiline:true},
       {key:'note',label:'Заметка',max:1000,wide:true,multiline:true}
     ];
-    function openSupplierCard(supplierId,catalogAction=null,editing=false){
+    function openSupplierCard(supplierId,catalogAction=null,editing=false,fromMaterial=false){
       const supplier=byId(state.suppliers,supplierId);
       if(!supplier)return;
       mode='supplier';
-      supplierCard={id:supplierId,catalogAction,revision:access.revision};
+      supplierCard={id:supplierId,catalogAction,fromMaterial,revision:access.revision};
       const fields=supplierFields.map(({key,label,max,type,wide,multiline})=>{
-        const attrs=`id="supplier-${key}" maxlength="${max}" ${editing?'':'readonly'}`;
+        if(!editing)return `<div class="field ${wide?'wide':''}"><span>${label}</span><div class="supplier-value">${escapeHTML(supplier[key]||'—')}</div></div>`;
+        const attrs=`id="supplier-${key}" maxlength="${max}"`;
         return `<div class="field ${wide?'wide':''}"><label for="supplier-${key}">${label}</label>${multiline?
           `<textarea ${attrs}></textarea>`:`<input type="${type||'text'}" ${attrs}/>`}</div>`;
       }).join('');
@@ -647,7 +680,7 @@
       $$('.topbar,main,.mobile-actions').forEach(el=>el.inert=true);
       modalFrame('Карточка поставщика','',`<div class="supplier-fields">${fields}</div>`,
         `<div class="modal-footer">${buttons}</div>`,'',editing?'#supplier-name':'#editSupplierCard');
-      for(const {key} of supplierFields)$(`#supplier-${key}`).value=supplier[key]??'';
+      if(editing)for(const {key} of supplierFields)$(`#supplier-${key}`).value=supplier[key]??'';
     }
     async function editSupplierSave(){
       const card=supplierCard;
@@ -661,7 +694,7 @@
       if(!supplier.name){toast('Укажите название поставщика.');return;}
       if(state.suppliers.some(x=>x.id!==card.id&&x.name.toLowerCase()===supplier.name.toLowerCase())){toast('Такой поставщик уже есть.');return;}
       if(await mutate({action:'supplier',revision:card.revision,supplier},'Поставщик обновлён.')&&supplierCard===card)
-        openSupplierCard(card.id,card.catalogAction);
+        openSupplierCard(card.id,card.catalogAction,false,card.fromMaterial);
     }
     async function removeMovement(idToRemove){
       const op=byId(state.movements,idToRemove);if(!op)return;
@@ -702,6 +735,7 @@
           if(await mutate({action:'manager',managerId},'Ответственный обновлён.'))closeOverlay();
           return;
         }
+        if(action==='show-warning-material')return showWarningMaterial(targetId);
         if(!access?.canManage&&action!=='close-modal')return;
         if(writing&&action!=='close-modal')return;
         if(action==='open-receipt')return openOperation('receipt',targetId||'');
@@ -709,14 +743,14 @@
         if(action==='open-catalog')return openCatalog();
         if(action==='catalog-suppliers')return openCatalog('suppliers');
         if(action==='close-modal')return dismissOverlay();
-        if(action==='open-supplier')return openSupplierCard(targetId);
+        if(action==='open-supplier'||action==='material-supplier')return openSupplierCard(targetId,null,false,action==='material-supplier');
         if(action==='toggle-supplier'){
           expandedSupplier=expandedSupplier===targetId?null:targetId;
           renderSuppliers();
           return $(supplierAction(action,targetId))?.focus({preventScroll:true});
         }
         if(action==='open-catalog-supplier'||action==='edit-catalog-supplier')return openSupplierCard(targetId,action,action==='edit-catalog-supplier');
-        if(action==='edit-supplier-card'||action==='cancel-supplier-edit')return openSupplierCard(supplierCard.id,supplierCard.catalogAction,action==='edit-supplier-card');
+        if(action==='edit-supplier-card'||action==='cancel-supplier-edit')return openSupplierCard(supplierCard.id,supplierCard.catalogAction,action==='edit-supplier-card',supplierCard.fromMaterial);
         if(action==='save-supplier-card')return editSupplierSave();
         if(action==='save-operation')return saveOperation();
         if(action==='add-row'){draft.rows.push(freshRow(mode));return updateRowsOnly();}
@@ -762,7 +796,11 @@
       if(event.key==='Escape'&&!$('#overlay').classList.contains('hidden'))dismissOverlay();
       if((event.key==='Enter'||event.key===' ')&&!event.target.closest('input,textarea,select,button')&&event.target.matches('[data-material],[data-movement]')){event.preventDefault();event.target.click();}
     });
-    $('#overlay').addEventListener('click',event=>{if(event.target.id==='overlay')dismissOverlay();});
+    $('#overlay').addEventListener('click',event=>{
+      if(event.target.id!=='overlay'||writing)return;
+      if(draft&&(JSON.stringify(draft)!==initialDraft||miniForm))return;
+      dismissOverlay();
+    });
     $('#metrics').addEventListener('click',event=>{const button=event.target.closest('[data-metric]');if(button)openMetric(button.dataset.metric);});
     $('#filterControls').addEventListener('click',event=>{const btn=event.target.closest('[data-filter]');if(btn){filter=btn.dataset.filter;renderInventory();}});
     $('#catalogButton').addEventListener('click',()=>openCatalog());

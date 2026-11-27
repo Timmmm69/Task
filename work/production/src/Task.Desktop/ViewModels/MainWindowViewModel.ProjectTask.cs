@@ -6,6 +6,12 @@ namespace Task.Desktop.ViewModels;
 public sealed partial class MainWindowViewModel
 {
     public AsyncCommand AddProjectTaskCommand { get; private set; } = null!;
+    public AsyncCommand OpenRelatedTaskCommand { get; private set; } = null!;
+    private bool CanOpenRelatedTask(object? item) =>
+        item is TaskItemViewModel row && IsConnected && Tasks?.CanOpenFromMonthlyPlan == true
+        && Projects is { IsActive: true, CanRead: true, Editor: null, IsDetailLoading: false, SelectedItem: { } project }
+        && row.Source.Card?.ProjectId == project.Id && Projects.RelatedTasks.Contains(row);
+
     public bool CanAddProjectTask => IsConnected && Tasks?.CanCreateFromShell == true
         && Tasks.Editor is null && !Tasks.IsBusy && !Tasks.IsMutationBusy
         && Tasks.Workspace?.IsBusy != true && string.IsNullOrEmpty(Tasks.Workspace?.CheckText)
@@ -32,6 +38,7 @@ public sealed partial class MainWindowViewModel
     private void NotifyProjectTaskAction()
     {
         AddProjectTaskCommand?.RaiseCanExecuteChanged();
+        OpenRelatedTaskCommand?.RaiseCanExecuteChanged();
         OnPropertyChanged(nameof(ProjectTaskActionHint));
     }
 }
