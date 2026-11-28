@@ -29,8 +29,25 @@
    <DockPanel LastChildFill="True" Margin="0,4,0,0">
     <Button DockPanel.Dock="Right" Content="Другая фраза" Command="{Binding AnotherPhraseCommand}" Padding="8,2" Margin="8,0,0,0"
             AutomationProperties.AutomationId="WorkdayNextPhrase" VerticalAlignment="Center"/>
-    <TextBlock Text="{Binding Phrase}" TextWrapping="Wrap" VerticalAlignment="Center" FontStyle="Italic"
-               Foreground="{DynamicResource Task.Brush.Text.Secondary}" AutomationProperties.AutomationId="WorkdayPhrase"/>
+    <Border Background="#F7F1E6" CornerRadius="8" Padding="16,10">
+     <Border.Style>
+      <Style TargetType="Border">
+       <Style.Triggers>
+        <DataTrigger Binding="{Binding Phrase}" Value=""><Setter Property="Visibility" Value="Collapsed"/></DataTrigger>
+       </Style.Triggers>
+      </Style>
+     </Border.Style>
+     <StackPanel>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4">
+       <Rectangle Width="28" Height="1" Fill="#A68A6C" VerticalAlignment="Center"/>
+       <TextBlock Text="Цитата дня" FontWeight="SemiBold" Foreground="#6C4529" Margin="10,0"/>
+       <Rectangle Width="28" Height="1" Fill="#A68A6C" VerticalAlignment="Center"/>
+      </StackPanel>
+      <TextBlock Text="{Binding Phrase, StringFormat='«{0}»'}" TextWrapping="Wrap" TextAlignment="Center"
+                 FontFamily="Georgia" FontStyle="Italic" FontSize="16" Foreground="#282019"
+                 AutomationProperties.AutomationId="WorkdayPhrase"/>
+     </StackPanel>
+    </Border>
    </DockPanel>
   </StackPanel>
  </Border>
